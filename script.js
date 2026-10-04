@@ -206,13 +206,20 @@ window.toggleTaskForStudent = function(taskId) {
 };
 
 // Eliminar Tarea de la lista general
-window.deleteTask = function(taskId) {
-  if (confirm("¿Estás seguro de que deseas eliminar esta tarea del curso?")) {
-    tasks = tasks.filter(task => task.id !== taskId);
-    localStorage.setItem('curso_tareas', JSON.stringify(tasks));
-    renderTasks(document.querySelector('.filter-btn.active')?.dataset.filter || 'todas', searchInput.value);
-  }
-};
+// Función para eliminar tarea de Firebase
+function deleteTask(taskId) {
+  // 1. Crear la referencia exacta a la tarea mediante su ID
+  const tareaEspecificaRef = ref(db, `tareas/${taskId}`);
+
+  // 2. Eliminarla de Firebase
+  remove(tareaEspecificaRef)
+    .then(() => {
+      console.log("Tarea eliminada correctamente de Firebase");
+    })
+    .catch((error) => {
+      console.error("Error al eliminar la tarea:", error);
+    });
+}
 
 // Filtros y Buscador
 document.querySelectorAll('.filter-btn').forEach(btn => {
